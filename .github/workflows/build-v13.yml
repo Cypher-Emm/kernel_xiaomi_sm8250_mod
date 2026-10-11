@@ -20,11 +20,11 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Source with Submodules
+      - name: Checkout Source (No Submodules)
         uses: actions/checkout@v4
         with:
           ref: ki-kernel-v1.3
-          submodules: recursive
+          submodules: false
           fetch-depth: 1
 
       - name: Install Build Dependencies
@@ -44,19 +44,20 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Ensure KernelSU Submodule & AnyKernel Template
+      - name: Setup KernelSU & AnyKernel Template
         run: |
-          git submodule update --init --recursive || true
+          # Remove any broken submodule index link
+          rm -rf drivers/kernelsu KernelSU
+          
+          # Clone ReSukiSU directly into drivers/kernelsu
+          echo 'Cloning ReSukiSU into drivers/kernelsu...'
+          git clone --depth=1 https://github.com/ReSukiSU/ReSukiSU.git -b main /tmp/resukisu ||           git clone --depth=1 https://github.com/tiann/KernelSU.git -b main /tmp/resukisu
+          
+          mkdir -p drivers/kernelsu
+          cp -r /tmp/resukisu/kernel/* drivers/kernelsu/
+          rm -rf /tmp/resukisu
 
-          # If drivers/kernelsu/Kconfig is still missing, link KernelSU source
-          if [ ! -f drivers/kernelsu/Kconfig ]; then
-            if [ -d KernelSU ]; then
-              ln -sfn ../KernelSU/kernel drivers/kernelsu || ln -sfn ../KernelSU drivers/kernelsu
-            else
-              curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-            fi
-          fi
-
+          # Setup anykernel template for build.sh
           mkdir -p anykernel_template
           if [ -f anykernel.sh ]; then
             cp -f anykernel.sh anykernel_template/anykernel.sh
