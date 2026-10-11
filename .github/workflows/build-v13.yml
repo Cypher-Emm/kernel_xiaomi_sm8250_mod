@@ -31,12 +31,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev             crossbuild-essential-arm64 libarchive-tools zip unzip tar wget git curl python3
 
-      - name: Download ZyCromerZ Clang 16
+      - name: Setup ZyCromerZ Clang 16
         run: |
-          mkdir -p $HOME/zyc-clang
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/16.0.6-20230623-release/Clang-16.0.6-20230623.tar.gz -O /tmp/zyc-clang.tar.gz
-          tar -xzf /tmp/zyc-clang.tar.gz -C $HOME/zyc-clang/
-          rm -f /tmp/zyc-clang.tar.gz
+          git clone --depth=1 https://gitlab.com/ZyCromerZ/Clang-16.git -b 16.0.6-20230623-release $HOME/zyc-clang ||           git clone --depth=1 https://github.com/ZyCromerZ/Clang.git -b 16.0.6-20230623-release $HOME/zyc-clang
+          echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
       - name: Run Ki-Kernel Build Script
         run: |
