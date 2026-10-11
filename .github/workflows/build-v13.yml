@@ -45,13 +45,19 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup BakaSU (4.19 + SuSFS Fork) & AnyKernel Template
+      - name: Setup BakaSU & Bypass SuSFS Compat Stop
         run: |
           rm -rf KernelSU drivers/kernelsu
           
           echo 'Cloning BakaSU...'
           git clone https://github.com/Baka-SU/BakaSU.git KernelSU
           
+          # Bypass the strict susfs version stop check
+          if [ -f KernelSU/kernel/tools/susfs_compat.mk ]; then
+            sed -i 's/error/warning/g' KernelSU/kernel/tools/susfs_compat.mk
+            sed -i '/Please wait susfs update/d' KernelSU/kernel/tools/susfs_compat.mk
+          fi
+
           # Restore the expected symlink for Kbuild
           ln -sfn ../KernelSU/kernel drivers/kernelsu
 
