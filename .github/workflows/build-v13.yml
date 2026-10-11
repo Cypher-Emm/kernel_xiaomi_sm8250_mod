@@ -49,7 +49,7 @@ jobs:
           rm -rf KernelSU drivers/kernelsu
           
           echo 'Cloning Backslash KernelSU...'
-          git clone https://github.com/backslashxx/KernelSU.git -b main KernelSU
+          git clone https://github.com/backslashxx/KernelSU.git KernelSU
           
           # Restore the expected symlink for Kbuild
           ln -sfn ../KernelSU/kernel drivers/kernelsu
