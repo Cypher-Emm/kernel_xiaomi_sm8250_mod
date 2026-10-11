@@ -30,7 +30,8 @@ jobs:
       - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev             crossbuild-essential-arm64 libarchive-tools zip unzip tar wget git curl python3 libzstd-dev
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev \
+            crossbuild-essential-arm64 libarchive-tools zip unzip tar wget git curl python3 libzstd-dev
 
       - name: Setup ZyCromerZ Clang 16
         run: |
@@ -44,12 +45,12 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup KowSU (4.19 + SuSFS Fork) & AnyKernel Template
+      - name: Setup BakaSU (4.19 + SuSFS Fork) & AnyKernel Template
         run: |
           rm -rf KernelSU drivers/kernelsu
           
-          echo 'Cloning Backslash KernelSU...'
-          git clone https://github.com/backslashxx/KernelSU.git KernelSU
+          echo 'Cloning BakaSU...'
+          git clone https://github.com/Baka-SU/BakaSU.git KernelSU
           
           # Restore the expected symlink for Kbuild
           ln -sfn ../KernelSU/kernel drivers/kernelsu
