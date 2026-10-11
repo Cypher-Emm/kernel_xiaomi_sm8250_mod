@@ -38,7 +38,13 @@ jobs:
           curl -sL "https://github.com/ZyCromerZ/Clang/releases/download/16.0.6-20260807-release/Clang-16.0.6-20260807.tar.gz" -o /tmp/zyc-clang.tar.gz
           tar -xzf /tmp/zyc-clang.tar.gz -C $HOME/zyc-clang/
           rm -f /tmp/zyc-clang.tar.gz
+
+          # Satisfy hardcoded v1.3 build.sh paths
+          mkdir -p $HOME/proton-clang
+          ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
+
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
+          echo "TOOLCHAIN_PATH=$HOME/zyc-clang/bin" >> $GITHUB_ENV
 
       - name: Run Ki-Kernel Build Script
         run: |
