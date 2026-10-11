@@ -44,14 +44,15 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup BakaSU & AnyKernel Template
+      - name: Setup KernelSU & AnyKernel Template
         run: |
-          # Clone BakaSU directly into top-level KernelSU
           rm -rf KernelSU drivers/kernelsu
-          echo 'Cloning BakaSU...'
-          git clone https://github.com/WildPlusKernel/BakaSU.git -b main KernelSU ||           git clone https://github.com/KernelSU/KernelSU.git -b main KernelSU
           
-          # Restore the expected symlink
+          # Clone the official, public KernelSU repository
+          echo 'Cloning official KernelSU...'
+          git clone https://github.com/tiann/KernelSU.git -b main KernelSU
+          
+          # Restore the expected symlink for Kbuild
           ln -sfn ../KernelSU/kernel drivers/kernelsu
 
           # Provide AnyKernel template
