@@ -1,4 +1,4 @@
-name: Build Ki-Kernel v1.3
+name: Build Ki-Kernel (Dev Branch)
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
         with:
-          ref: ki-kernel-v1.3
+          ref: dev
           submodules: false
           fetch-depth: 1
 
@@ -44,18 +44,16 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup KernelSU & AnyKernel Template
+      - name: Setup KowSU (4.19 + SuSFS Fork) & AnyKernel Template
         run: |
           rm -rf KernelSU drivers/kernelsu
           
-          # Clone the official, public KernelSU repository
-          echo 'Cloning official KernelSU...'
-          git clone https://github.com/tiann/KernelSU.git -b main KernelSU
+          echo 'Cloning KowSU...'
+          git clone https://github.com/KowX77/KowSU.git -b main KernelSU
           
           # Restore the expected symlink for Kbuild
           ln -sfn ../KernelSU/kernel drivers/kernelsu
 
-          # Provide AnyKernel template
           mkdir -p anykernel_template
           if [ -f anykernel.sh ]; then
             cp -f anykernel.sh anykernel_template/anykernel.sh
@@ -69,5 +67,5 @@ jobs:
       - name: Upload Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ki-Kernel-v1.3-${{ github.event.inputs.target_device }}-${{ github.event.inputs.target_os }}
+          name: Ki-Kernel-DEV-${{ github.event.inputs.target_device }}-${{ github.event.inputs.target_os }}
           path: ./*.zip
