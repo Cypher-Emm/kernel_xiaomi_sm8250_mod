@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Source (No Submodules)
+      - name: Checkout Source
         uses: actions/checkout@v4
         with:
           ref: ki-kernel-v1.3
@@ -44,20 +44,17 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup KernelSU & AnyKernel Template
+      - name: Setup BakaSU & AnyKernel Template
         run: |
-          # Remove any broken submodule index link
-          rm -rf drivers/kernelsu KernelSU
+          # Clone BakaSU directly into top-level KernelSU
+          rm -rf KernelSU drivers/kernelsu
+          echo 'Cloning BakaSU...'
+          git clone https://github.com/WildPlusKernel/BakaSU.git -b main KernelSU ||           git clone https://github.com/KernelSU/KernelSU.git -b main KernelSU
           
-          # Clone ReSukiSU directly into drivers/kernelsu
-          echo 'Cloning ReSukiSU into drivers/kernelsu...'
-          git clone --depth=1 https://github.com/ReSukiSU/ReSukiSU.git -b main /tmp/resukisu ||           git clone --depth=1 https://github.com/tiann/KernelSU.git -b main /tmp/resukisu
-          
-          mkdir -p drivers/kernelsu
-          cp -r /tmp/resukisu/kernel/* drivers/kernelsu/
-          rm -rf /tmp/resukisu
+          # Restore the expected symlink
+          ln -sfn ../KernelSU/kernel drivers/kernelsu
 
-          # Setup anykernel template for build.sh
+          # Provide AnyKernel template
           mkdir -p anykernel_template
           if [ -f anykernel.sh ]; then
             cp -f anykernel.sh anykernel_template/anykernel.sh
