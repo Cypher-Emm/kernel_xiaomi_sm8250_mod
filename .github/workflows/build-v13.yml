@@ -39,15 +39,17 @@ jobs:
           tar -xzf /tmp/zyc-clang.tar.gz -C $HOME/zyc-clang/
           rm -f /tmp/zyc-clang.tar.gz
 
-          # Satisfy hardcoded v1.3 build.sh paths
+          # Satisfy v1.3 toolchain check
           mkdir -p $HOME/proton-clang
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
-
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
-          echo "TOOLCHAIN_PATH=$HOME/zyc-clang/bin" >> $GITHUB_ENV
 
-      - name: Run Ki-Kernel Build Script
+      - name: Setup AnyKernel Template & Run Build Script
         run: |
+          mkdir -p anykernel_template
+          if [ -f anykernel.sh ]; then
+            cp -f anykernel.sh anykernel_template/anykernel.sh
+          fi
           chmod +x build.sh
           bash build.sh ${{ github.event.inputs.target_device }} ${{ github.event.inputs.variant }} ${{ github.event.inputs.target_os }}
 
