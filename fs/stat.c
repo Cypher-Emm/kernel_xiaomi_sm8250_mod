@@ -829,15 +829,3 @@ void inode_set_bytes(struct inode *inode, loff_t bytes)
 
 EXPORT_SYMBOL(inode_set_bytes);
 
-#ifdef CONFIG_KSU_MANUAL_HOOK
-extern int ksu_handle_newfstat_ret(unsigned int *fd, struct stat __user **statbuf_ptr);
-#endif
-
-// Appended helper to invoke the newfstat return hook for sandboxed apps
-int ksu_sys_newfstat_hook(unsigned int fd, struct stat __user *statbuf)
-{
-#ifdef CONFIG_KSU_MANUAL_HOOK
-    ksu_handle_newfstat_ret(&fd, &statbuf);
-#endif
-    return 0;
-}
