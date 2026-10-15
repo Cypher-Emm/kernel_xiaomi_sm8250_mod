@@ -45,14 +45,16 @@ jobs:
           ln -sfn $HOME/zyc-clang $HOME/proton-clang/proton-clang-20210522
           echo "$HOME/zyc-clang/bin" >> $GITHUB_PATH
 
-      - name: Setup BakaSU & Bypass SuSFS Compat Stop
+      - name: Setup BakaSU SELinux SID fix & SuSFS compatibility workaround
         run: |
           rm -rf KernelSU drivers/kernelsu
           
           echo 'Cloning BakaSU...'
           git clone https://github.com/Baka-SU/BakaSU.git KernelSU
+          # Pin the upstream fix for duplicate SELinux SIDs on 4.19/4.14 kernels.
+          git -C KernelSU checkout --detach d7260ca1e5c128061122924d0d48754e361e135c
           
-          # Bypass the strict susfs version stop check
+          # Keep the existing SuSFS compatibility workaround for this kernel tree.
           if [ -f KernelSU/kernel/tools/susfs_compat.mk ]; then
             sed -i 's/error/warning/g' KernelSU/kernel/tools/susfs_compat.mk
             sed -i '/Please wait susfs update/d' KernelSU/kernel/tools/susfs_compat.mk
